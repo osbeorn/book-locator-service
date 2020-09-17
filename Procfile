@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -server -cp target/classes:target/dependency/* com.kumuluz.ee.EeApplication
+web: java $JAVA_OPTS -server -cp v1/apitarget/classes:v1/apiarget/dependency/* com.kumuluz.ee.EeApplication
