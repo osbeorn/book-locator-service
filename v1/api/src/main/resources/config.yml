@@ -19,11 +19,11 @@ kumuluzee:
       pool:
         max-size: 10
 
-#  health:
-#    checks:
-#      data-source-health-check:
-#        type: liveness
-#        jndi-name: jdbc/BookLocatorDS
+  health:
+    checks:
+      data-source-health-check:
+        type: liveness
+        jndi-name: jdbc/BookLocatorDS
 
   openapi-mp:
     enabled: true
