@@ -2,7 +2,7 @@ package com.github.osbeorn.book_locator.api.rest.v1;
 
 import com.github.osbeorn.book_locator.api.rest.filters.MaintenanceFilter;
 import com.github.osbeorn.book_locator.api.rest.mappers.*;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.CodelistResource;
+import com.github.osbeorn.book_locator.api.rest.v1.resources.TestResource;
 import com.github.osbeorn.book_locator.services.providers.JacksonProvider;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
@@ -80,7 +80,7 @@ public class RestApplication extends Application {
         Set<Class<?>> classes = new HashSet<>();
 
         // Resources
-        classes.add(CodelistResource.class);
+        classes.add(TestResource.class);
 
         // Providers
         classes.add(JacksonProvider.class);
