@@ -1,0 +1,37 @@
+kumuluzee:
+  dev:
+    scan-libraries:
+      - book-locator-service-v1-lib
+  name: book-locator-service
+  version: ${project.version}
+  env:
+    name: dev
+  server:
+    base-url: http://localhost:8080
+    context-path: /book-locator-service/v1
+  datasources:
+    - jndi-name: jdbc/BookLocatorDS
+      connection-url: jdbc:postgresql://localhost:5434/book-locator-service
+      username: postgres
+      password: postgres
+      pool:
+        max-size: 10
+
+  health:
+    checks:
+      data-source-health-check:
+        type: liveness
+        jndi-name: jdbc/PersonsDS
+
+  openapi-mp:
+    enabled: true
+    servlet:
+    ui:
+      enabled: true
+
+  version-info:
+    endpoint: /version
+
+  cors-filter:
+    servlet:
+      allow-origin: "*"

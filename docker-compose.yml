@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  book-locator-service-pg:
+    image: postgres:11-alpine
+    container_name: "book-locator-service-pg"
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=persons-service
+    restart: always

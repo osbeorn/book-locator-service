@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="config-name">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p %marker %m %X %ex %n"/>
+        </Console>
+
+        <RollingFile name="file_other_info" fileName="logs/other_info.log" filePattern="logs/other_info.%i.log">
+            <JSONLayout complete="false" compact="true" eventEol="true" charset="UTF-8" properties="true">
+                <KeyValuePair key="timestamp" value="$${date:dd.MM.yyyy'T'HH:mm:ss.SSSZ}" />
+            </JSONLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+
+        <RollingFile name="file_resource_trace" fileName="logs/resource_trace.log"
+                     filePattern="logs/resource_trace.%i.log">
+            <JSONLayout complete="false" compact="true" eventEol="true" charset="UTF-8" properties="true">
+                <KeyValuePair key="timestamp" value="$${date:dd.MM.yyyy'T'HH:mm:ss.SSSZ}" />
+            </JSONLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="si.sava.services.persons.api.rest.v1.resources" level="trace" additivity="false">
+            <AppenderRef ref="file_resource_trace"/>
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="si.sava.services.persons.services" level="trace" additivity="false">
+            <AppenderRef ref="file_other_info"/>
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="file_other_info"/>
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

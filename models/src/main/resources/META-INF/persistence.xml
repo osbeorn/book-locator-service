@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+
+    <persistence-unit name="persons-service-api" transaction-type="JTA">
+
+        <jta-data-source>jdbc/PersonsDS</jta-data-source>
+
+        <!-- Mapped superclasses -->
+        <class>si.sava.services.persons.models.db.common.BaseEntity</class>
+        <class>si.sava.services.persons.models.db.common.BaseLookupEntity</class>
+
+        <!-- Entities -->
+        <class>si.sava.services.persons.models.db.AddressEntity</class>
+        <class>si.sava.services.persons.models.db.BankAccountEntity</class>
+        <class>si.sava.services.persons.models.db.CompanyEntity</class>
+        <class>si.sava.services.persons.models.db.ContactEntity</class>
+        <class>si.sava.services.persons.models.db.CountryEntity</class>
+        <class>si.sava.services.persons.models.db.ExternalKeyEntity</class>
+        <class>si.sava.services.persons.models.db.ExternalPersonEntity</class>
+        <class>si.sava.services.persons.models.db.PersonDataEntity</class>
+        <class>si.sava.services.persons.models.db.PersonDataTimestampEntity</class>
+        <class>si.sava.services.persons.models.db.PersonEntity</class>
+        <class>si.sava.services.persons.models.db.SystemEntity</class>
+
+        <class>si.sava.services.persons.models.db.lookup.AddressTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.BankAccountTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.ConsolidationQualityLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.ContactTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.ContactSubTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.ExternalKeyTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.PersonDataLegalFormLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.PersonDataSubTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.PersonDataTypeLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.GenderLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.SyncStatusLookupEntity</class>
+        <class>si.sava.services.persons.models.db.lookup.ValidationStatusLookupEntity</class>
+
+        <!-- Converters -->
+        <class>si.sava.services.persons.models.converters.InstantAttributeConverter</class>
+        <class>si.sava.services.persons.models.converters.LocalDateAttributeConverter</class>
+        <class>si.sava.services.persons.models.converters.UUIDAttributeConverter</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+            <property name="javax.persistence.validation.mode" value="NONE" />
+
+            <property name="eclipselink.session.customizer" value="si.sava.services.persons.models.customizers.UUIDSequence"/>
+
+<!--            <property name="eclipselink.logging.level.sql" value="FINE"/>-->
+<!--            <property name="eclipselink.logging.parameters" value="TRUE"/>-->
+
+            <property name="eclipselink.cache.shared.default" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>
