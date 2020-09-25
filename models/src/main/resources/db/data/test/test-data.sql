@@ -1,6 +1,6 @@
 -- libraries
 INSERT INTO libraries (id, created_at, created_by, updated_at, updated_by, version, code, name) VALUES
-('527f1480-d256-45ae-9ccb-abadc98b6aef', CURRENT_TIMESTAMP, 'SYSTEM', CURRENT_TIMESTAMP, 'SYSTEM', 1, 'MKL-50', 'Knjižnica Otona Župančiča');
+('527f1480-d256-45ae-9ccb-abadc98b6aef', CURRENT_TIMESTAMP, 'SYSTEM', CURRENT_TIMESTAMP, 'SYSTEM', 1, '5', 'Knjižnica Otona Župančiča');
 
 -- floors
 INSERT INTO floors (id, created_at, created_by, updated_at, updated_by, version, code, name, floor_plan, rack_code_identifier, next_floor_id, library_id) VALUES
