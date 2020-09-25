@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author benjamink, Sunesis ltd.
@@ -22,5 +22,13 @@ import java.io.Serializable;
 public class RackEntity extends BaseEntity implements Serializable {
 
     @NotNull
-    private String label;
+    private String code;
+
+    @OneToMany(mappedBy = "rack", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RackContentEntity> contents;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "floor_id")
+    private FloorEntity floor;
 }

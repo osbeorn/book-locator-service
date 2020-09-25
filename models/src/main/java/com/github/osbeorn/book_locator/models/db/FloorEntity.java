@@ -19,10 +19,28 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@NamedQuery(
+        name = "FloorEntity.getByLibraryIdAndCode",
+        query = "SELECT f " +
+                "FROM FloorEntity f " +
+                "WHERE " +
+                "   f.library.id = :libraryId AND " +
+                "   f.code = :code"
+)
 public class FloorEntity extends BaseEntity implements Serializable {
 
     @NotNull
-    private String label;
+    private String code;
+
+    @NotNull
+    private String name;
+
+    /**
+     * The name of the attribute in a floor plan SVG that defines a rack, eg. data-rack-id
+     */
+    @NotNull
+    @Column(name = "rack_code_identifier")
+    private String rackCodeIdentifier;
 
     @Column(name = "floor_plan")
     private byte[] floorPlan;
@@ -31,7 +49,10 @@ public class FloorEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "next_floor_id")
     private FloorEntity nextFloor;
 
-    @OneToMany
-    @JoinColumn(name = "floor_id")
+    @OneToMany(mappedBy = "floor")
     private List<RackEntity> racks;
+
+    @ManyToOne
+    @JoinColumn(name = "library_id")
+    private LibraryEntity library;
 }

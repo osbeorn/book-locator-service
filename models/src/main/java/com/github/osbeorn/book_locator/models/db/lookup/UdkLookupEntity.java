@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Entity
-@Table(name = "udk_lookup")
+@Table(name = "udks_lookup")
 @Getter
 @Setter
 @NoArgsConstructor

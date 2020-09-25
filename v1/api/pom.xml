@@ -20,6 +20,12 @@
             <groupId>com.github.osbeorn.book-locator</groupId>
             <artifactId>book-locator-service-v1-lib</artifactId>
         </dependency>
+
+        <!-- External -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

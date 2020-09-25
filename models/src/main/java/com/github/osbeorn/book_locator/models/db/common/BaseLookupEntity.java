@@ -16,9 +16,9 @@ import javax.validation.constraints.NotNull;
 public abstract class BaseLookupEntity extends BaseEntity {
 
     @NotNull
-    private String value;
+    private String code;
 
-    private String label;
+    private String name;
 
     @NotNull
     private Boolean deleted;

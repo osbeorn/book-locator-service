@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -27,8 +26,14 @@ public class RackContentEntity extends BaseEntity implements Serializable {
      * - regex=true --> 821.*
      */
     @NotNull
-    private String label;
+    private String identifier;
 
     @NotNull
+    @Column(name = "regex")
     private Boolean regex;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "rack_id")
+    private RackEntity rack;
 }

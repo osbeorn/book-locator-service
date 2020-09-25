@@ -66,17 +66,19 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
-                    <!-- DEV -->
-                    <url>jdbc:postgresql://localhost:5434/persons-service</url>
-
-                    <!-- TEST -->
-<!--                    <url>jdbc:postgresql://172.16.101.19:5432/persons-service</url>-->
-
                     <schemas>
                         <schema>public</schema>
                     </schemas>
+
+                    <!-- DEV -->
+                    <url>jdbc:postgresql://localhost:5436/book-locator-service</url>
                     <user>postgres</user>
                     <password>postgres</password>
+
+                    <!-- TEST -->
+<!--                    <url>jdbc:postgresql://ec2-54-246-85-151.eu-west-1.compute.amazonaws.com:5432/d2f0m7jrffirem</url>-->
+<!--                    <user>ordxbaukatxqyn</user>-->
+<!--                    <password>e2da84dde873bc5a36f1badc068bfd50f047a7a470ab6d4249ed3309bf41673c</password>-->
                 </configuration>
             </plugin>
         </plugins>

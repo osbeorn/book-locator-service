@@ -4,9 +4,9 @@ services:
     image: postgres:11-alpine
     container_name: "book-locator-service-pg"
     ports:
-      - 5435:5432
+      - 5436:5432
     environment:
       - POSTGES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=persons-service
+      - POSTGRES_DB=book-locator-service
     restart: always

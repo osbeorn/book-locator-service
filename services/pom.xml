@@ -37,10 +37,6 @@
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-jax-rs-jersey</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.kumuluz.ee.streaming</groupId>
-            <artifactId>kumuluzee-streaming-kafka</artifactId>
-        </dependency>
 
         <!-- External -->
         <dependency>
@@ -58,6 +54,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -1,7 +1,5 @@
 package com.github.osbeorn.book_locator.models.db.common;
 
-import com.kumuluz.ee.rest.annotations.RestMapping;
-import com.kumuluz.ee.rest.annotations.RestMappings;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,48 +40,28 @@ public abstract class BaseEntity implements Serializable {
      * Timestamp when entity was inserted to the database.
      */
     @Column(name = "created_at", updatable = false)
-    @RestMappings({
-            @RestMapping("revisionData"),
-            @RestMapping("revisionData.createdAt")
-    })
     protected Instant createdAt;
 
     /**
      * Identifier of the person/process responsible for creating the entity
      */
     @Column(name = "created_by")
-    @RestMappings({
-            @RestMapping("revisionData"),
-            @RestMapping("revisionData.createdBy")
-    })
     protected String createdBy;
 
     /**
      * Timestamp when entity was last updated in the database.
      */
     @Column(name = "updated_at")
-    @RestMappings({
-            @RestMapping("revisionData"),
-            @RestMapping("revisionData.updatedAt")
-    })
     protected Instant updatedAt;
 
     /**
      * Identifier of the person/process responsible for updating the entity
      */
     @Column(name = "updated_by", updatable = false)
-    @RestMappings({
-            @RestMapping("revisionData"),
-            @RestMapping("revisionData.updatedBy")
-    })
     protected String updatedBy;
 
     @Version
     @Column(name="version")
-    @RestMappings({
-            @RestMapping("revisionData"),
-            @RestMapping("revisionData.version")
-    })
     protected Long version;
 
     /**

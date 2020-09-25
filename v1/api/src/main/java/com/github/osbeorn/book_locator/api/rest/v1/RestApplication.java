@@ -2,7 +2,7 @@ package com.github.osbeorn.book_locator.api.rest.v1;
 
 import com.github.osbeorn.book_locator.api.rest.filters.MaintenanceFilter;
 import com.github.osbeorn.book_locator.api.rest.mappers.*;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.TestResource;
+import com.github.osbeorn.book_locator.api.rest.v1.resources.*;
 import com.github.osbeorn.book_locator.services.providers.JacksonProvider;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
@@ -35,15 +35,15 @@ import java.util.Set;
                         description = "Local server"
                 ),
                 @Server(
-                        url = "http://{ENVIRONMENT}:8080/book-locator-service/v1",
+                        url = "https://{ENVIRONMENT}/book-locator-service/v1",
                         description = "Remote environments",
                         variables = {
                                 @ServerVariable(
                                         name = "ENVIRONMENT",
                                         description = "Test environment",
-                                        defaultValue = "172.16.101.19",
+                                        defaultValue = "book-locator-service.herokuapp.com",
                                         enumeration = {
-                                                "172.16.101.19"
+                                                "book-locator-service.herokuapp.com"
                                         }
                                 )
                         }
@@ -51,23 +51,24 @@ import java.util.Set;
         },
         tags = {
                 @Tag(
-                        name = "persons",
-                        description = "Operations for working with the Person object, such as searching, fetching basic " +
-                                "data or details, altering validation status, etc."
+                        name = "libraries",
+                        description = "Operations for working with the Library object, such as searching, " +
+                                "fetching details, altering details, etc."
                 ),
                 @Tag(
-                        name = "external_persons",
-                        description = "Operations for working with the ExternalPerson object, such as searching, " +
-                                "fetching details, altering sync configuration, etc."
+                        name = "floors",
+                        description = "Operations for working with the Floor object, such as searching, " +
+                                "fetching details, altering details, etc."
                 ),
                 @Tag(
-                        name = "systems",
-                        description = "Operations for working with the System object, such as altering sync configuration, etc."
+                        name = "racks",
+                        description = "Operations for working with the Floor object, such as searching, " +
+                                "fetching details, altering details, etc."
                 ),
                 @Tag(
-                        name = "config",
-                        description = "Operations for working with the configuration of other objects, such as altering " +
-                                "sync configuration for ExternalPersons, default sync configuration of Systems, etc."
+                        name = "lookups",
+                        description = "Operations for working with the Lookup objects, such as searching, " +
+                                "fetching details, etc."
                 )
         }
 )
@@ -80,7 +81,11 @@ public class RestApplication extends Application {
         Set<Class<?>> classes = new HashSet<>();
 
         // Resources
+        classes.add(FloorResource.class);
+        classes.add(LibraryResource.class);
+        classes.add(LookupResource.class);
         classes.add(TestResource.class);
+        classes.add(SearchResource.class);
 
         // Providers
         classes.add(JacksonProvider.class);
@@ -113,6 +118,7 @@ public class RestApplication extends Application {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put("jersey.config.server.wadl.disableWadl", "true");
+        properties.put("jersey.config.server.provider.classnames", "org.glassfish.jersey.media.multipart.MultiPartFeature");
 
         return properties;
     }
