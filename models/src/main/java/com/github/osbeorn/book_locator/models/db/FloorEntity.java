@@ -42,6 +42,7 @@ public class FloorEntity extends BaseEntity implements Serializable {
     @Column(name = "rack_code_identifier")
     private String rackCodeIdentifier;
 
+    @Lob
     @Column(name = "floor_plan")
     private byte[] floorPlan;
 

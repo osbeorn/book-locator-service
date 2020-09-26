@@ -20,7 +20,6 @@ import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.enums.FilterOperation;
 import com.kumuluz.ee.rest.utils.JPAUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,11 +28,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -106,7 +102,7 @@ public class FloorServiceImpl implements FloorService {
 
     @Override
     @Transactional
-    public Floor patchFloor(UUID id, Floor floor) {
+    public Floor patchFloor(UUID id, Floor floor, boolean processFloorPlan) {
         if (floor == null) {
             throw new BadRequestException("Empty payload");
         }
@@ -115,6 +111,10 @@ public class FloorServiceImpl implements FloorService {
         floorEntity = floorMapper.mapToEntity(floor, floorEntity);
 
         validationManager.validateEntity(floorEntity);
+
+        if (processFloorPlan) {
+            processFloorPlan(floorEntity);
+        }
 
         return floorMapper.mapToLib(floorEntity);
     }
@@ -242,16 +242,9 @@ public class FloorServiceImpl implements FloorService {
             throw new BadRequestException(String.format("Unable to read floor plan content: %s.", e.getMessage()), e);
         }
 
-//        var rackCodeList = processFloorPlan(floorPlan, floorEntity.getRackCodeAttribute());
-//        rackCodeList.forEach(rc -> {
-//            var rackEntity = new RackEntity();
-//            rackEntity.setCode(rc);
-//            rackEntity.setFloor(floorEntity);
-//
-//            entityManager.persist(rackEntity);
-//        });
-
         floorEntity.setFloorPlan(floorPlan);
+
+        processFloorPlan(floorEntity);
     }
 
     @Override
@@ -261,22 +254,26 @@ public class FloorServiceImpl implements FloorService {
         return floorEntity.getFloorPlan();
     }
 
-    private List<String> processFloorPlan(byte[] floorPlan, String rackAttribute) {
-        final String RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", rackAttribute);
+    private void processFloorPlan(FloorEntity floorEntity) {
+        if (floorEntity.getRackCodeIdentifier() == null || floorEntity.getFloorPlan() == null) {
+            return;
+        }
 
-        List<String> rackCodeList = new ArrayList<>();
+        final var RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", floorEntity.getRackCodeIdentifier());
+
+        var rackCodeList = new ArrayList<String>();
 
         // process SVG and extract rack IDs
         // if it fails, it fails
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(floorPlan));
+            var factory = DocumentBuilderFactory.newInstance();
+            var builder = factory.newDocumentBuilder();
+            var doc = builder.parse(new ByteArrayInputStream(floorEntity.getFloorPlan()));
 
-            XPathFactory xPathfactory = XPathFactory.newInstance();
-            XPath xpath = xPathfactory.newXPath();
-            XPathExpression expr = xpath.compile(RACK_XPATH_EXPRESSION);
-            NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            var xPathfactory = XPathFactory.newInstance();
+            var xpath = xPathfactory.newXPath();
+            var expr = xpath.compile(RACK_XPATH_EXPRESSION);
+            var nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 rackCodeList.add(nodeList.item(i).getNodeValue());
@@ -284,8 +281,44 @@ public class FloorServiceImpl implements FloorService {
         } catch (Exception e) {
             // ignore and log exception
             LOG.error("Failed to process floor plan SVG.", e);
+            return;
         }
 
-        return rackCodeList;
+        // delete non-existing racks
+        if (floorEntity.getRacks() != null) {
+            var rackEntityListToRemove = new ArrayList<RackEntity>();
+
+            floorEntity.getRacks().stream()
+                    .filter(re -> !rackCodeList.contains(re.getCode()))
+                    .forEach(re -> {
+                        rackEntityListToRemove.add(re);
+                        entityManager.remove(re);
+                    });
+
+            floorEntity.getRacks().removeAll(rackEntityListToRemove);
+        }
+
+        // insert new racks
+        var rackEntityList = rackCodeList.stream()
+                .filter(c ->
+                        floorEntity.getRacks() == null ||
+                        floorEntity.getRacks().stream().noneMatch(re -> re.getCode().equals(c))
+                )
+                .map(rc -> {
+                    var rackEntity = new RackEntity();
+                    rackEntity.setCode(rc);
+                    rackEntity.setFloor(floorEntity);
+
+                    entityManager.persist(rackEntity);
+
+                    return rackEntity;
+                })
+                .collect(Collectors.toList());
+
+        if (floorEntity.getRacks() == null) {
+            floorEntity.setRacks(new ArrayList<>());
+        }
+
+        floorEntity.getRacks().addAll(rackEntityList);
     }
 }

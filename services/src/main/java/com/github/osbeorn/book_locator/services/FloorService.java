@@ -22,7 +22,7 @@ public interface FloorService {
 
     FloorEntity getFloorEntityByLibraryIdAndCode(UUID libraryId, String code);
 
-    Floor patchFloor(UUID id, Floor floor);
+    Floor patchFloor(UUID id, Floor floor, boolean processFloorPlan);
 
     QueryResult<Rack> getFloorRacks(UUID id, QueryParameters queryParameters);
 

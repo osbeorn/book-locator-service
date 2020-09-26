@@ -104,13 +104,14 @@ public class FloorResource extends BaseResource {
     })
     public Response patchFloor(
             @PathParam("id") UUID id,
+            @QueryParam("processFloorPlan") @DefaultValue("false") boolean processFloorPlan,
             @RequestBody(
                     description = "New Floor (each property by its identifier)",
                     content = @Content(mediaType = "application/json")
             )
             Floor newFloor
     ) {
-        newFloor = floorService.patchFloor(id, newFloor);
+        newFloor = floorService.patchFloor(id, newFloor, processFloorPlan);
 
         return Response.ok(newFloor).build();
     }
