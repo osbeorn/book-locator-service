@@ -141,7 +141,7 @@ public class SearchServiceImpl implements SearchService {
                             .replaceAll("\\s+", "");
 
                     if (rce.getRegex()) {
-                        var pattern = Pattern.compile(rce.getIdentifier(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                        var pattern = Pattern.compile(identifier, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
                         return pattern.matcher(searchIdentifier).matches();
                     } else {
                         return identifier.toLowerCase().equals(cleanSearchIdentifier.toLowerCase());
