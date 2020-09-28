@@ -25,7 +25,7 @@ public class MissingVerifiedFieldValueExceptionMapper implements ExceptionMapper
 
     @Override
     public Response toResponse(MissingVerifiedFieldValueException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("missing.verified.field.value");

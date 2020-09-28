@@ -25,7 +25,7 @@ public class FormatNotSupportedExceptionMapper implements ExceptionMapper<NotSup
 
     @Override
     public Response toResponse(NotSupportedException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("format.not.supported");

@@ -24,7 +24,7 @@ public class ServiceExceptionMapper implements ExceptionMapper<ServiceException>
 
     @Override
     public Response toResponse(ServiceException e) {
-        ApiError apiError = new ApiError();
+        var apiError = new ApiError();
         apiError.setRef(UUID.randomUUID());
         apiError.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         apiError.setCode(e.getErrorCode().getCode());

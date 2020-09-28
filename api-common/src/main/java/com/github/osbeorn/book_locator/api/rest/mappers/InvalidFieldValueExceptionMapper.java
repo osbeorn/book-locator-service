@@ -25,7 +25,7 @@ public class InvalidFieldValueExceptionMapper implements ExceptionMapper<Invalid
 
     @Override
     public Response toResponse(InvalidFieldValueException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("resource.invalid.field.value");

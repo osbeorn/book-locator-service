@@ -31,7 +31,7 @@ public class ResourceNotFoundExceptionMapper implements ExceptionMapper<Resource
 
     @Override
     public Response toResponse(ResourceNotFoundException e) {
-        ApiError apiError = new ApiError();
+        var apiError = new ApiError();
         apiError.setRef(UUID.randomUUID());
         apiError.setStatus(Response.Status.NOT_FOUND.getStatusCode());
         apiError.setCode("resource.not.found");

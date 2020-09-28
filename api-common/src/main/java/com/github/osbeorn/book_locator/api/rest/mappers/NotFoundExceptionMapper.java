@@ -25,7 +25,7 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
 
     @Override
     public Response toResponse(NotFoundException exception) {
-        ApiError apiError = new ApiError();
+        var apiError = new ApiError();
         apiError.setRef(UUID.randomUUID());
         apiError.setStatus(Response.Status.NOT_FOUND.getStatusCode());
         apiError.setCode("not.found");

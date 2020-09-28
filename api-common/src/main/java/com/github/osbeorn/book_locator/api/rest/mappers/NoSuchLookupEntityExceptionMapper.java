@@ -25,7 +25,7 @@ public class NoSuchLookupEntityExceptionMapper implements ExceptionMapper<NoSuch
 
     @Override
     public Response toResponse(NoSuchLookupEntityException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("codelist.not.found");

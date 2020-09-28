@@ -25,8 +25,7 @@ public class PathParamExceptionMapper implements ExceptionMapper<ParamException.
 
     @Override
     public Response toResponse(ParamException.PathParamException exception) {
-
-        ApiError apiError = new ApiError();
+        var apiError = new ApiError();
         apiError.setRef(UUID.randomUUID());
         apiError.setStatus(Response.Status.NOT_FOUND.getStatusCode());
         apiError.setCode("not.found");

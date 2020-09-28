@@ -9,7 +9,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Sunesis ltd.
@@ -25,7 +24,7 @@ public class MaintenanceFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         if (specificServiceProperties.getMaintenance()) {
-            Map<String, String> response = new HashMap<>();
+            var response = new HashMap<String, String>();
             response.put("status", "maintenance");
 
             requestContext.abortWith(

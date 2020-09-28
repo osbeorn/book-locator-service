@@ -25,7 +25,7 @@ public class FormatNotAcceptableExceptionMapper implements ExceptionMapper<NotAc
 
     @Override
     public Response toResponse(NotAcceptableException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("media.not.supported");

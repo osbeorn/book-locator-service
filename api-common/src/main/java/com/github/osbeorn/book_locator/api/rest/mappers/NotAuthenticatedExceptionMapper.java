@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -27,22 +26,20 @@ public class NotAuthenticatedExceptionMapper implements ExceptionMapper<NotAutho
 
     @Override
     public Response toResponse(NotAuthorizedException exception) {
-
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
         error.setCode("not.authorized");
         error.setMessage(i18n.getString("not.authorized"));
 
-        Response.ResponseBuilder responseBuilder = Response
+        var responseBuilder = Response
                 .status(Response.Status.UNAUTHORIZED)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(error);
 
-        List<Object> challenges = exception.getChallenges();
-
+        var challenges = exception.getChallenges();
         if (challenges != null) {
-            for (Object challenge : challenges) {
+            for (var challenge : challenges) {
                 responseBuilder = responseBuilder.header(HttpHeaders.WWW_AUTHENTICATE, challenge);
             }
         }

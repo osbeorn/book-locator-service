@@ -28,7 +28,7 @@ public class GeneralExceptionExceptionMapper implements ExceptionMapper<Exceptio
     private static final Logger LOG = LogManager.getLogger(GeneralExceptionExceptionMapper.class.getName());
 
     public Response toResponse(Exception exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         error.setCode("internal.error");

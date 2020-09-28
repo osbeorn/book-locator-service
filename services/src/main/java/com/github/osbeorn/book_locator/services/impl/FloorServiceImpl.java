@@ -107,7 +107,7 @@ public class FloorServiceImpl implements FloorService {
             throw new BadRequestException("Empty payload");
         }
 
-        FloorEntity floorEntity = getFloorEntity(id);
+        var floorEntity = getFloorEntity(id);
         floorEntity = floorMapper.mapToEntity(floor, floorEntity);
 
         validationManager.validateEntity(floorEntity);

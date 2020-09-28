@@ -25,7 +25,7 @@ public class ServiceValidationExceptionMapper implements ExceptionMapper<Service
 
     @Override
     public Response toResponse(ServiceValidationException e) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.FORBIDDEN.getStatusCode());
         error.setCode(ServiceValidationException.ERROR_CODE);

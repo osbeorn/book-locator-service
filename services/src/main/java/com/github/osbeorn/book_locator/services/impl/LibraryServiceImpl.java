@@ -10,7 +10,6 @@ import com.github.osbeorn.book_locator.services.mappers.FloorMapper;
 import com.github.osbeorn.book_locator.services.mappers.LibraryMapper;
 import com.github.osbeorn.book_locator.services.types.QueryResult;
 import com.github.osbeorn.book_locator.services.utils.ValidationManager;
-import com.kumuluz.ee.rest.beans.Queried;
 import com.kumuluz.ee.rest.beans.QueryFilter;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.enums.FilterOperation;
@@ -45,7 +44,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public QueryResult<Library> getLibraries(QueryParameters queryParameters) {
-        Queried<LibraryEntity> libraryEntitiesQueried = JPAUtils.getQueried(entityManager, LibraryEntity.class, queryParameters);
+        var libraryEntitiesQueried = JPAUtils.getQueried(entityManager, LibraryEntity.class, queryParameters);
 
         return new QueryResult<>(
                 libraryEntitiesQueried.stream()
@@ -57,7 +56,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public Library getLibrary(UUID id) {
-        LibraryEntity libraryEntity = getLibraryEntity(id);
+        var libraryEntity = getLibraryEntity(id);
 
         return libraryMapper.mapToLib(libraryEntity);
     }
@@ -68,7 +67,7 @@ public class LibraryServiceImpl implements LibraryService {
             throw new ResourceNotFoundException(Library.class.getSimpleName(), "null");
         }
 
-        LibraryEntity libraryEntity = entityManager.find(LibraryEntity.class, id);
+        var libraryEntity = entityManager.find(LibraryEntity.class, id);
         if (libraryEntity == null) {
             throw new ResourceNotFoundException(Library.class.getSimpleName(), String.valueOf(id));
         }
@@ -98,7 +97,7 @@ public class LibraryServiceImpl implements LibraryService {
             throw new BadRequestException("Empty payload");
         }
 
-        LibraryEntity libraryEntity = libraryMapper.mapToEntity(library);
+        var libraryEntity = libraryMapper.mapToEntity(library);
 
         validationManager.validateEntity(libraryEntity);
 
@@ -114,7 +113,7 @@ public class LibraryServiceImpl implements LibraryService {
             throw new BadRequestException("Empty payload");
         }
 
-        LibraryEntity libraryEntity = getLibraryEntity(id);
+        var libraryEntity = getLibraryEntity(id);
         libraryEntity = libraryMapper.mapToEntity(library, libraryEntity);
 
         validationManager.validateEntity(libraryEntity);
@@ -126,7 +125,7 @@ public class LibraryServiceImpl implements LibraryService {
     public QueryResult<Floor> getLibraryFloors(UUID id, QueryParameters queryParameters) {
         queryParameters.addFilter(new QueryFilter("library.id", FilterOperation.EQ, String.valueOf(id)));
 
-        Queried<FloorEntity> floorEntitiesQueried = JPAUtils.getQueried(entityManager, FloorEntity.class, queryParameters);
+        var floorEntitiesQueried = JPAUtils.getQueried(entityManager, FloorEntity.class, queryParameters);
 
         return new QueryResult<>(
                 floorEntitiesQueried.stream()
@@ -143,9 +142,9 @@ public class LibraryServiceImpl implements LibraryService {
             throw new BadRequestException("Empty payload");
         }
 
-        LibraryEntity libraryEntity = getLibraryEntity(id);
+        var libraryEntity = getLibraryEntity(id);
 
-        FloorEntity floorEntity = floorMapper.mapToEntity(floor);
+        var floorEntity = floorMapper.mapToEntity(floor);
         floorEntity.setLibrary(libraryEntity);
 
         validationManager.validateEntity(floorEntity);

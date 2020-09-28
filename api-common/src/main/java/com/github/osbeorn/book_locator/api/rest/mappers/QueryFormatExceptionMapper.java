@@ -25,7 +25,7 @@ public class QueryFormatExceptionMapper implements ExceptionMapper<QueryFormatEx
 
     @Override
     public Response toResponse(QueryFormatException exception) {
-        ApiError error = new ApiError();
+        var error = new ApiError();
         error.setRef(UUID.randomUUID());
         error.setStatus(Response.Status.BAD_REQUEST.getStatusCode());
         error.setCode("malformed.query");
