@@ -45,11 +45,22 @@ public class PingServiceImpl implements PingService {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
         var baseUrl = genericServiceProperties.getBaseUrl();
+        if (baseUrl == null) {
+            LOG.info("Missing 'baseUrl' config value. Skipping ping setup.");
+            return;
+        }
+
         var contextPath = genericServiceProperties.getContextPath();
-        if (contextPath.startsWith("/")) {
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        if (contextPath != null && contextPath.startsWith("/")) {
             contextPath = contextPath.substring(1);
         }
-        baseUrl = baseUrl + "/" + contextPath;
+
+        if (contextPath != null) {
+            baseUrl = baseUrl + "/" + contextPath;
+        }
 
         target = client.target(baseUrl)
                 .path("health");
