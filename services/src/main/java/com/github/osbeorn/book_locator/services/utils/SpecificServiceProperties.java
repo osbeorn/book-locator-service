@@ -14,11 +14,13 @@ import javax.enterprise.context.ApplicationScoped;
  * @since 1.0.0
  */
 @ApplicationScoped
-@ConfigBundle("sava-api")
+@ConfigBundle("api")
 @Getter
 @Setter
 public class SpecificServiceProperties {
 
     @ConfigValue(value = "maintenance", watch = true)
     private Boolean maintenance = false;
+
+    private Boolean debugJaxRsClient = true;
 }

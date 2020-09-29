@@ -2,6 +2,8 @@ package com.github.osbeorn.book_locator.services.utils;
 
 import com.kumuluz.ee.configuration.cdi.ConfigBundle;
 import com.kumuluz.ee.configuration.cdi.ConfigValue;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -13,6 +15,8 @@ import javax.enterprise.context.ApplicationScoped;
  */
 @ApplicationScoped
 @ConfigBundle(".")
+@Getter
+@Setter
 public class GenericServiceProperties {
 
     private String headerTotalCountName = "X-Total-Count";
@@ -20,19 +24,6 @@ public class GenericServiceProperties {
     @ConfigValue("kumuluzee.server.base-url")
     private String baseUrl = "http://localhost:8080";
 
-    public String getHeaderTotalCountName() {
-        return headerTotalCountName;
-    }
-
-    public void setHeaderTotalCountName(String headerTotalCountName) {
-        this.headerTotalCountName = headerTotalCountName;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
+    @ConfigValue("kumuluzee.server.context-path")
+    private String contextPath;
 }
