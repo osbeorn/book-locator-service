@@ -60,8 +60,8 @@ public class SearchServiceImpl implements SearchService {
 
         var l = parameters.get(L);
 
-        // L must be 3 characters long
-        if (l.length() != 3) {
+        // L must be 2 characters long
+        if (l.length() != 2) {
             throw new InvalidSearchParameterException(L);
         }
 
