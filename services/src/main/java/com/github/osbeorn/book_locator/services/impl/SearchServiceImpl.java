@@ -9,6 +9,7 @@ import com.github.osbeorn.book_locator.services.FloorService;
 import com.github.osbeorn.book_locator.services.LibraryService;
 import com.github.osbeorn.book_locator.services.LookupService;
 import com.github.osbeorn.book_locator.services.SearchService;
+import com.github.osbeorn.book_locator.services.exceptions.MissingRequiredSearchParametersException;
 import com.github.osbeorn.book_locator.services.exceptions.ResourceNotFoundException;
 import com.github.osbeorn.book_locator.services.mappers.FloorMapper;
 import com.github.osbeorn.book_locator.services.mappers.LibraryMapper;
@@ -52,6 +53,10 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResponse getSearchResponse(String query) {
         var parameters = buildParametersMap(query);
+        if (parameters.get("L") == null || parameters.get(U) == null) {
+            throw new MissingRequiredSearchParametersException();
+        }
+
         var identifier = buildSearchIdentifier(parameters);
 
         String udkName = "";
@@ -63,11 +68,14 @@ public class SearchServiceImpl implements SearchService {
             // do nothing
         }
 
-        // TODO - which parameter is the library code?
-        var libraryEntity = libraryService.getLibraryEntityByCode("5");
-
+        // L(5L) - 5 = library code, L = floor code
         var l = parameters.get(L);
-        var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), "L");
+        var lLibraryCode = l.substring(0, 1);
+        var lFloorCode = l.substring(1, 2);
+
+        var libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
+
+        var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
 
         var rackEntityList = searchFloorRacks(identifier, floorEntity.getRacks());
 
