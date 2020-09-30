@@ -101,6 +101,7 @@ public class RestApplication extends Application {
         classes.add(FormatNotSupportedExceptionMapper.class);
         classes.add(GeneralExceptionExceptionMapper.class);
         classes.add(InvalidFieldValueExceptionMapper.class);
+        classes.add(InvalidSearchParameterExceptionMapper.class);
         classes.add(MissingRequiredSearchParametersExceptionMapper.class);
         classes.add(MissingVerifiedFieldValueExceptionMapper.class);
         classes.add(NoSuchLookupEntityExceptionMapper.class);

@@ -9,6 +9,7 @@ import com.github.osbeorn.book_locator.services.FloorService;
 import com.github.osbeorn.book_locator.services.LibraryService;
 import com.github.osbeorn.book_locator.services.LookupService;
 import com.github.osbeorn.book_locator.services.SearchService;
+import com.github.osbeorn.book_locator.services.exceptions.InvalidSearchParameterException;
 import com.github.osbeorn.book_locator.services.exceptions.MissingRequiredSearchParametersException;
 import com.github.osbeorn.book_locator.services.exceptions.ResourceNotFoundException;
 import com.github.osbeorn.book_locator.services.mappers.FloorMapper;
@@ -53,11 +54,27 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResponse getSearchResponse(String query) {
         var parameters = buildParametersMap(query);
-        if (parameters.get("L") == null || parameters.get(U) == null) {
+        if (parameters.get(L) == null || parameters.get(U) == null) {
             throw new MissingRequiredSearchParametersException();
         }
 
+        var l = parameters.get(L);
+
+        // L must be 3 characters long
+        if (l.length() != 3) {
+            throw new InvalidSearchParameterException(L);
+        }
+
+        // L(5L) - 5 = library code, L = floor code
+        var lLibraryCode = l.substring(0, 1);
+        var lFloorCode = l.substring(1, 2);
+
+        var libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
+
+        var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
+
         var identifier = buildSearchIdentifier(parameters);
+        var rackEntityList = searchFloorRacks(identifier, floorEntity.getRacks());
 
         String udkName = "";
         try {
@@ -67,17 +84,6 @@ public class SearchServiceImpl implements SearchService {
         } catch (ResourceNotFoundException e) {
             // do nothing
         }
-
-        // L(5L) - 5 = library code, L = floor code
-        var l = parameters.get(L);
-        var lLibraryCode = l.substring(0, 1);
-        var lFloorCode = l.substring(1, 2);
-
-        var libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
-
-        var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
-
-        var rackEntityList = searchFloorRacks(identifier, floorEntity.getRacks());
 
         var searchResponse = new SearchResponse();
 
