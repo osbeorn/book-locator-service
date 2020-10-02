@@ -60,17 +60,10 @@ public class SearchServiceImpl implements SearchService {
 
         var l = parameters.get(L);
 
-        // L must be 2 characters long
-        if (l.length() != 2) {
-            throw new InvalidSearchParameterException(L);
-        }
-
-        // L(5L) - 5 = library code, L = floor code
-        var lLibraryCode = l.substring(0, 1);
-        var lFloorCode = l.substring(1, 2);
+        var lLibraryCode = extractLibraryCode(l);
+        var lFloorCode = extractFloorCode(l);
 
         var libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
-
         var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
 
         var identifier = buildSearchIdentifier(parameters);
@@ -125,6 +118,24 @@ public class SearchServiceImpl implements SearchService {
                 });
 
         return parameters;
+    }
+
+    private String extractLibraryCode(String l) {
+        var matcher = Pattern.compile("(^\\d+)", Pattern.CASE_INSENSITIVE).matcher(l);
+        if (matcher.find() && matcher.groupCount() == 1) {
+            return matcher.group(1);
+        }
+
+        throw new InvalidSearchParameterException(L);
+    }
+
+    private String extractFloorCode(String l) {
+        var matcher = Pattern.compile("^\\d+(.+)$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(l);
+        if (matcher.find() && matcher.groupCount() == 1) {
+            return matcher.group(1);
+        }
+
+        throw new InvalidSearchParameterException(L);
     }
 
     private String buildSearchIdentifier(Map<String, String> parameters) {
