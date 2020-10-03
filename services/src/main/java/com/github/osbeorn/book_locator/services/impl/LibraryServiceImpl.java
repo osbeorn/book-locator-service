@@ -18,6 +18,7 @@ import com.kumuluz.ee.rest.utils.JPAUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import java.util.UUID;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class LibraryServiceImpl implements LibraryService {
 
-    @Inject
+    @PersistenceContext(unitName = "book-locator-service-api")
     private EntityManager entityManager;
 
     @Inject

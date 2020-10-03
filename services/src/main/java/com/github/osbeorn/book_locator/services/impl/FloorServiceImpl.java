@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
@@ -48,7 +49,7 @@ public class FloorServiceImpl implements FloorService {
 
     private static final Logger LOG = LogManager.getLogger(FloorServiceImpl.class);
 
-    @Inject
+    @PersistenceContext(unitName = "book-locator-service-api")
     private EntityManager entityManager;
 
     @Inject

@@ -13,6 +13,7 @@ import com.kumuluz.ee.rest.utils.JPAUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class LookupServiceImpl implements LookupService {
     private static final String GET_ONE_QUERY_PATTERN = "SELECT l from %s l WHERE l.code = :code";
     private static final String GET_DEFAULT_QUERY_PATTERN = "SELECT l from %s l WHERE l._default = TRUE";
 
-    @Inject
+    @PersistenceContext(unitName = "book-locator-service-api")
     private EntityManager entityManager;
 
     @Inject
