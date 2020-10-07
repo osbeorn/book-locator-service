@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SearchServiceImpl implements SearchService {
 
-    private static final String L = "L"; // lokacija
-    private static final String I = "I"; // posebna zbirka
-    private static final String U = "U"; // udk
-    private static final String A = "A"; // avtor?
+    public static final String L = "L"; // lokacija
+    public static final String I = "I"; // posebna zbirka
+    public static final String U = "U"; // udk
+    public static final String A = "A"; // avtor?
 
     @Inject
     private LookupService lookupService;
@@ -105,7 +105,8 @@ public class SearchServiceImpl implements SearchService {
         return searchResponse;
     }
 
-    private Map<String, String> buildParametersMap(String query) {
+    @Override
+    public Map<String, String> buildParametersMap(String query) {
         var parameters = new HashMap<String, String>();
 
         Arrays.stream(query.split("_"))
@@ -120,7 +121,8 @@ public class SearchServiceImpl implements SearchService {
         return parameters;
     }
 
-    private String extractLibraryCode(String l) {
+    @Override
+    public String extractLibraryCode(String l) {
         var matcher = Pattern.compile("(^\\d+)", Pattern.CASE_INSENSITIVE).matcher(l);
         if (matcher.find() && matcher.groupCount() == 1) {
             return matcher.group(1);
@@ -129,7 +131,8 @@ public class SearchServiceImpl implements SearchService {
         throw new InvalidSearchParameterException(L);
     }
 
-    private String extractFloorCode(String l) {
+    @Override
+    public String extractFloorCode(String l) {
         var matcher = Pattern.compile("^\\d+(.+)$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(l);
         if (matcher.find() && matcher.groupCount() == 1) {
             return matcher.group(1);
