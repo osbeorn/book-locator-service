@@ -63,7 +63,7 @@ public class PingServiceImpl implements PingService {
         }
 
         target = client.target(baseUrl)
-                .path("health");
+                .path("libraries");
 
         executorService.scheduleAtFixedRate(pingSelf(), 25, 25, TimeUnit.MINUTES);
     }
