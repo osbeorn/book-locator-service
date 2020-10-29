@@ -32,10 +32,10 @@
 
             <property name="eclipselink.session.customizer" value="com.github.osbeorn.book_locator.models.customizers.UUIDSequence"/>
 
+            <property name="eclipselink.cache.shared.default" value="false"/>
+
 <!--            <property name="eclipselink.logging.level.sql" value="FINE"/>-->
 <!--            <property name="eclipselink.logging.parameters" value="TRUE"/>-->
-
-<!--            <property name="eclipselink.cache.shared.default" value="false"/>-->
 
 <!--            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>-->
 <!--            <property name="eclipselink.ddl-generation.output-mode" value="sql-script"/>-->
