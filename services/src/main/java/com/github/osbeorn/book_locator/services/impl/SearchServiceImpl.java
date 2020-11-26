@@ -2,13 +2,9 @@ package com.github.osbeorn.book_locator.services.impl;
 
 import com.github.osbeorn.book_locator.lib.v1.Rack;
 import com.github.osbeorn.book_locator.lib.v1.responses.SearchResponse;
-import com.github.osbeorn.book_locator.models.db.RackContentEntity;
-import com.github.osbeorn.book_locator.models.db.RackEntity;
+import com.github.osbeorn.book_locator.models.db.*;
 import com.github.osbeorn.book_locator.models.db.lookup.UdkLookupEntity;
-import com.github.osbeorn.book_locator.services.FloorService;
-import com.github.osbeorn.book_locator.services.LibraryService;
-import com.github.osbeorn.book_locator.services.LookupService;
-import com.github.osbeorn.book_locator.services.SearchService;
+import com.github.osbeorn.book_locator.services.*;
 import com.github.osbeorn.book_locator.services.exceptions.InvalidSearchParameterException;
 import com.github.osbeorn.book_locator.services.exceptions.MissingRequiredSearchParametersException;
 import com.github.osbeorn.book_locator.services.exceptions.ResourceNotFoundException;
@@ -17,6 +13,7 @@ import com.github.osbeorn.book_locator.services.mappers.LibraryMapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -51,23 +48,63 @@ public class SearchServiceImpl implements SearchService {
     @Inject
     private FloorMapper floorMapper;
 
+    @Inject
+    private SearchLogService searchLogService;
+
     @Override
     public SearchResponse getSearchResponse(String query) {
+        var queryStart = Instant.now();
+
         var parameters = buildParametersMap(query);
         if (parameters.get(L) == null || parameters.get(U) == null) {
+            logSearchError(queryStart, query, "missing.required.search.parameters");
             throw new MissingRequiredSearchParametersException();
         }
 
         var l = parameters.get(L);
 
-        var lLibraryCode = extractLibraryCode(l);
-        var lFloorCode = extractFloorCode(l);
+        String lLibraryCode;
+        try {
+            lLibraryCode = extractLibraryCode(l);
+        } catch (InvalidSearchParameterException e) {
+            logSearchError(queryStart, query, "invalid.search.parameter");
+            throw e;
+        }
 
-        var libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
-        var floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
+        String lFloorCode;
+        try {
+            lFloorCode = extractFloorCode(l);
+        } catch (InvalidSearchParameterException e) {
+            logSearchError(queryStart, query, "invalid.search.parameter");
+            throw e;
+        }
+
+        LibraryEntity libraryEntity;
+        try {
+            libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
+        } catch (ResourceNotFoundException e) {
+            logSearchError(queryStart, query, "library.not.found");
+            throw e;
+        } catch (Exception e) {
+            logSearchError(queryStart, query, "library.search.error");
+            throw e;
+        }
+
+        FloorEntity floorEntity;
+        try {
+            floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
+        } catch (ResourceNotFoundException e) {
+            logSearchError(queryStart, query, "floor.not.found");
+            throw e;
+        } catch (Exception e) {
+            logSearchError(queryStart, query, "floor.search.error");
+            throw e;
+        }
 
         var identifier = buildSearchIdentifier(parameters);
         var rackEntityList = searchFloorRacks(identifier, floorEntity.getRacks());
+
+        logSearch(queryStart, query, rackEntityList);
 
         String udkName = "";
         try {
@@ -180,5 +217,27 @@ public class SearchServiceImpl implements SearchService {
                 .collect(Collectors.toList());
 
         return rackContentList;
+    }
+
+    private void logSearchError(Instant queryStart, String query, String errorCode) {
+        var searchLogEntity = new SearchLogEntity();
+
+        searchLogEntity.setQueryStart(queryStart);
+        searchLogEntity.setQueryEnd(Instant.now());
+        searchLogEntity.setQuery(query);
+        searchLogEntity.setErrorCode(errorCode);
+
+        searchLogService.create(searchLogEntity);
+    }
+
+    private void logSearch(Instant queryStart, String query, List<RackEntity> rackEntityList) {
+        var searchLogEntity = new SearchLogEntity();
+
+        searchLogEntity.setQueryStart(queryStart);
+        searchLogEntity.setQueryEnd(Instant.now());
+        searchLogEntity.setQuery(query);
+        searchLogEntity.setResultCount(rackEntityList.size());
+
+        searchLogService.create(searchLogEntity);
     }
 }

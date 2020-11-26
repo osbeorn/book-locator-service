@@ -18,6 +18,7 @@
         <class>com.github.osbeorn.book_locator.models.db.LibraryEntity</class>
         <class>com.github.osbeorn.book_locator.models.db.RackContentEntity</class>
         <class>com.github.osbeorn.book_locator.models.db.RackEntity</class>
+        <class>com.github.osbeorn.book_locator.models.db.SearchLogEntity</class>
 
         <class>com.github.osbeorn.book_locator.models.db.lookup.UdkLookupEntity</class>
 

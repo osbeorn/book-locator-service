@@ -76,9 +76,14 @@
                     <password>postgres</password>
 
                     <!-- TEST -->
-<!--                    <url>jdbc:postgresql://ec2-54-246-85-151.eu-west-1.compute.amazonaws.com:5432/d2f0m7jrffirem</url>-->
-<!--                    <user>ordxbaukatxqyn</user>-->
-<!--                    <password>e2da84dde873bc5a36f1badc068bfd50f047a7a470ab6d4249ed3309bf41673c</password>-->
+<!--                    <url>jdbc:postgresql://ec2-54-76-215-139.eu-west-1.compute.amazonaws.com:5432/d7ef9ga59vuh8m</url>-->
+<!--                    <user>amxurcsfxnqodk</user>-->
+<!--                    <password>c120860966a4f010f39be8b735ec1e210af8d68f0b86068156d3dd29f4f40149</password>-->
+
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                        <location>filesystem:src/main/resources/db/data/test</location>
+                    </locations>
                 </configuration>
             </plugin>
         </plugins>
