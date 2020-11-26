@@ -2,10 +2,7 @@ package com.github.osbeorn.book_locator.api.rest.v1;
 
 import com.github.osbeorn.book_locator.api.rest.filters.MaintenanceFilter;
 import com.github.osbeorn.book_locator.api.rest.mappers.*;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.FloorResource;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.LibraryResource;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.LookupResource;
-import com.github.osbeorn.book_locator.api.rest.v1.resources.SearchResource;
+import com.github.osbeorn.book_locator.api.rest.v1.resources.*;
 import com.github.osbeorn.book_locator.services.providers.JacksonProvider;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
@@ -88,6 +85,7 @@ public class RestApplication extends Application {
         classes.add(LibraryResource.class);
         classes.add(LookupResource.class);
         classes.add(SearchResource.class);
+        classes.add(StatisticResource.class);
 
         // Providers
         classes.add(JacksonProvider.class);

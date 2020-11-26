@@ -80,6 +80,23 @@ CREATE TABLE racks (
     floor_id UUID NOT NULL
 );
 
+-- search_logs
+CREATE TABLE search_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by VARCHAR NOT NULL,
+    version NUMERIC NOT NULL DEFAULT 1,
+
+    query_start TIMESTAMP NOT NULL,
+    query_end TIMESTAMP NOT NULL,
+    query VARCHAR,
+    result_count NUMERIC,
+    error_code VARCHAR
+);
+
 -- lookup tables
 -- udks_lookup
 CREATE TABLE udks_lookup (
