@@ -82,8 +82,10 @@
 
                     <locations>
                         <location>filesystem:src/main/resources/db/migration</location>
-                        <location>filesystem:src/main/resources/db/data/test</location>
+<!--                        <location>filesystem:src/main/resources/db/data/test</location>-->
                     </locations>
+
+                    <mixed>true</mixed>
                 </configuration>
             </plugin>
         </plugins>

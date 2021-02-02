@@ -209,7 +209,7 @@ public class SearchServiceImpl implements SearchService {
                         var pattern = Pattern.compile(identifier, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
                         return pattern.matcher(searchIdentifier).matches();
                     } else {
-                        return identifier.toLowerCase().equals(cleanSearchIdentifier.toLowerCase());
+                        return identifier.equalsIgnoreCase(cleanSearchIdentifier);
                     }
                 })
                 .map(RackContentEntity::getRack)
