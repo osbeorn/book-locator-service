@@ -27,11 +27,11 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="si.sava.services.persons.api.rest.v1.resources" level="trace" additivity="false">
+        <Logger name="com.github.osbeorn.book_locator.api.rest.v1.resources" level="trace" additivity="false">
             <AppenderRef ref="file_resource_trace"/>
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="si.sava.services.persons.services" level="trace" additivity="false">
+        <Logger name="com.github.osbeorn.book_locator.services" level="trace" additivity="false">
             <AppenderRef ref="file_other_info"/>
             <AppenderRef ref="console"/>
         </Logger>

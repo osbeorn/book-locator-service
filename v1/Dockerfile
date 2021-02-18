@@ -1,4 +1,4 @@
-FROM openjdk:11.0.3-jre-slim
+FROM openjdk:15-jdk-alpine
 
 RUN mkdir /app
 
@@ -10,4 +10,4 @@ ENV JAVA_ENV=PRODUCTION
 
 EXPOSE 8080
 
-CMD ["java", "-cp", "classes:dependency/*", "com.kumuluz.ee.EeApplication"]
+CMD ["java", "-server", "-cp", "classes:dependency/*", "com.kumuluz.ee.EeApplication"]
