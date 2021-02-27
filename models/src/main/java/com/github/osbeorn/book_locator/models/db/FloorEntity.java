@@ -46,10 +46,6 @@ public class FloorEntity extends BaseEntity implements Serializable {
     @Column(name = "floor_plan")
     private byte[] floorPlan;
 
-    @OneToOne
-    @JoinColumn(name = "next_floor_id")
-    private FloorEntity nextFloor;
-
     @OneToMany(mappedBy = "floor")
     private List<RackEntity> racks;
 

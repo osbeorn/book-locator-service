@@ -1,0 +1,1 @@
+ALTER TABLE floors DROP COLUMN next_floor_id;

@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -36,6 +37,12 @@ public class ResourceNotFoundExceptionMapper implements ExceptionMapper<Resource
         apiError.setStatus(Response.Status.NOT_FOUND.getStatusCode());
         apiError.setCode("resource.not.found");
         apiError.setMessage(i18n.getString("resource.not.found", e.getResource(), e.getIdentifier()));
+
+        var params = new HashMap<String, String>();
+        params.put("resource", e.getResource());
+        params.put("identifier", e.getIdentifier());
+
+        apiError.setParams(params);
 
         LOG.trace(e);
 
