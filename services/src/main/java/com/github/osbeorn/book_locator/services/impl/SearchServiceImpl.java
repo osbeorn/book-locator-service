@@ -109,7 +109,7 @@ public class SearchServiceImpl implements SearchService {
         String udkName = "";
         try {
             var u = parameters.get(U);
-            var lookupEntity = lookupService.getLookupEntity(UdkLookupEntity.class, u);
+            var lookupEntity = lookupService.getLookupEntity(UdkLookupEntity.class, u, true);
             udkName = lookupEntity.getName();
         } catch (ResourceNotFoundException e) {
             // do nothing

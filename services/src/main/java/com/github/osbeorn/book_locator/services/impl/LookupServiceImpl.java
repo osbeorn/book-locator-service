@@ -27,6 +27,7 @@ public class LookupServiceImpl implements LookupService {
     private static final String LOOKUP_ENTITY_PACKAGE_NAME = "com.github.osbeorn.book_locator.models.db.lookup";
 
     private static final String GET_ONE_QUERY_PATTERN = "SELECT l from %s l WHERE l.code = :code";
+    private static final String GET_ONE_CASE_INSENSITIVE_QUERY_PATTERN = "SELECT l from %s l WHERE lower(l.code) = :code";
     private static final String GET_DEFAULT_QUERY_PATTERN = "SELECT l from %s l WHERE l._default = TRUE";
 
     @PersistenceContext(unitName = "book-locator-service-api")
@@ -54,8 +55,12 @@ public class LookupServiceImpl implements LookupService {
         );
     }
 
-    @Override
     public <T> T getLookupEntity(Class<T> clazz, String code) {
+        return getLookupEntity(clazz, code, false);
+    }
+
+    @Override
+    public <T> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive) {
         var entityName = clazz.getSimpleName();
         var libName = entityName.replace("LookupEntity", "");
 
@@ -63,10 +68,16 @@ public class LookupServiceImpl implements LookupService {
             throw new ResourceNotFoundException(libName, "null");
         }
 
-        var query = String.format(GET_ONE_QUERY_PATTERN, entityName);
+        String codeParameter = caseInsensitive
+                ? code.toLowerCase()
+                : code;
+
+        var query = caseInsensitive
+                ? String.format(GET_ONE_CASE_INSENSITIVE_QUERY_PATTERN, entityName)
+                : String.format(GET_ONE_QUERY_PATTERN, entityName);
 
         return entityManager.createQuery(query, clazz)
-                .setParameter("code", code)
+                .setParameter("code", codeParameter)
                 .setMaxResults(1)
                 .getResultStream()
                 .findFirst()

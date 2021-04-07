@@ -17,5 +17,7 @@ public interface LookupService {
 
     <T> T getLookupEntity(Class<T> clazz, String code);
 
+    <T> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive);
+
     <T> Optional<T> getDefaultLookupEntity(Class<T> clazz);
 }
