@@ -18,7 +18,7 @@ public class Floor extends BaseType {
 
     private String name;
 
-    private String rackCodeIdentifier;
+    private RackCodeSelector rackCodeSelector;
 
     private UUID libraryId;
 }

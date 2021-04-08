@@ -38,3 +38,10 @@ kumuluzee:
     servlet:
       allow-origin: "*"
       supported-methods: "GET,POST,PUT,PATCH,HEAD,OPTIONS"
+
+  jcache:
+    caffeine:
+      caffeine.jcache:
+        lookup:
+          key-type: java.lang.String
+          value-type: java.util.Map

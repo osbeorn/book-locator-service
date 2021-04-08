@@ -21,6 +21,7 @@
         <class>com.github.osbeorn.book_locator.models.db.SearchLogEntity</class>
 
         <class>com.github.osbeorn.book_locator.models.db.lookup.UdkLookupEntity</class>
+        <class>com.github.osbeorn.book_locator.models.db.lookup.InternalDesignationLookupEntity</class>
 
         <!-- Converters -->
         <class>com.github.osbeorn.book_locator.models.converters.InstantAttributeConverter</class>
@@ -37,9 +38,6 @@
 
 <!--            <property name="eclipselink.logging.level.sql" value="FINE"/>-->
 <!--            <property name="eclipselink.logging.parameters" value="TRUE"/>-->
-
-<!--            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>-->
-<!--            <property name="eclipselink.ddl-generation.output-mode" value="sql-script"/>-->
         </properties>
     </persistence-unit>
 </persistence>

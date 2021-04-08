@@ -35,4 +35,8 @@ public class SearchResponse {
     private List<Rack> racks;
 
     private String udkName;
+
+    private String internalDesignationName;
+    private String internalDesignationDescription;
+    private String internalDesignationInfoUrl;
 }

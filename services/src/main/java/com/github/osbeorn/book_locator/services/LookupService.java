@@ -15,9 +15,9 @@ public interface LookupService {
 
     <T extends BaseLookupType, T2 extends BaseLookupEntity> QueryResult<T> getLookupList(String lookup, QueryParameters queryParameters);
 
-    <T> T getLookupEntity(Class<T> clazz, String code);
+    <T extends BaseLookupEntity> T getLookupEntity(Class<T> clazz, String code);
 
-    <T> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive);
+    <T extends BaseLookupEntity> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive);
 
-    <T> Optional<T> getDefaultLookupEntity(Class<T> clazz);
+    <T extends BaseLookupEntity> Optional<T> getDefaultLookupEntity(Class<T> clazz);
 }

@@ -7,6 +7,7 @@ import com.github.osbeorn.book_locator.services.exceptions.NoSuchLookupEntityExc
 import com.github.osbeorn.book_locator.services.exceptions.ResourceNotFoundException;
 import com.github.osbeorn.book_locator.services.mappers.LookupMappers;
 import com.github.osbeorn.book_locator.services.types.QueryResult;
+import com.github.osbeorn.book_locator.services.utils.LookupCacheUtil;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
 
@@ -36,6 +37,9 @@ public class LookupServiceImpl implements LookupService {
     @Inject
     private LookupMappers lookupMappers;
 
+    @Inject
+    private LookupCacheUtil lookupCacheUtil;
+
     @Override
     @SuppressWarnings("unchecked")
     public <T extends BaseLookupType, T2 extends BaseLookupEntity> QueryResult<T> getLookupList(String lookup, QueryParameters queryParameters) {
@@ -55,12 +59,12 @@ public class LookupServiceImpl implements LookupService {
         );
     }
 
-    public <T> T getLookupEntity(Class<T> clazz, String code) {
+    public <T extends BaseLookupEntity> T getLookupEntity(Class<T> clazz, String code) {
         return getLookupEntity(clazz, code, false);
     }
 
     @Override
-    public <T> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive) {
+    public <T extends BaseLookupEntity> T getLookupEntity(Class<T> clazz, String code, boolean caseInsensitive) {
         var entityName = clazz.getSimpleName();
         var libName = entityName.replace("LookupEntity", "");
 
@@ -72,20 +76,33 @@ public class LookupServiceImpl implements LookupService {
                 ? code.toLowerCase()
                 : code;
 
+        T cachedLookupEntity = lookupCacheUtil.cacheGet(clazz, code.toLowerCase());
+        if (cachedLookupEntity != null) {
+            return cachedLookupEntity;
+        }
+
         var query = caseInsensitive
                 ? String.format(GET_ONE_CASE_INSENSITIVE_QUERY_PATTERN, entityName)
                 : String.format(GET_ONE_QUERY_PATTERN, entityName);
 
-        return entityManager.createQuery(query, clazz)
+        Optional<T> lookupEntityOptional = entityManager.createQuery(query, clazz)
                 .setParameter("code", codeParameter)
                 .setMaxResults(1)
                 .getResultStream()
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException(libName, code));
+                .findFirst();
+
+        if (lookupEntityOptional.isPresent()) {
+            T lookupEntity = lookupEntityOptional.get();
+            lookupCacheUtil.cachePut(clazz, code.toLowerCase(), lookupEntity);
+
+            return lookupEntity;
+        } else {
+            throw new ResourceNotFoundException(libName, code);
+        }
     }
 
     @Override
-    public <T> Optional<T> getDefaultLookupEntity(Class<T> clazz) {
+    public <T extends BaseLookupEntity> Optional<T> getDefaultLookupEntity(Class<T> clazz) {
         var entityName = clazz.getSimpleName();
 
         var query = String.format(GET_DEFAULT_QUERY_PATTERN, entityName);

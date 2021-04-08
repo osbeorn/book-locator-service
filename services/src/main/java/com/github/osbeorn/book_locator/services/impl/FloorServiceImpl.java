@@ -19,8 +19,8 @@ import com.kumuluz.ee.rest.beans.QueryFilter;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.enums.FilterOperation;
 import com.kumuluz.ee.rest.utils.JPAUtils;
+import net.sf.saxon.s9api.Processor;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.w3c.dom.NodeList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,9 +29,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -256,28 +254,29 @@ public class FloorServiceImpl implements FloorService {
     }
 
     private void processFloorPlan(FloorEntity floorEntity) {
-        if (floorEntity.getRackCodeIdentifier() == null || floorEntity.getFloorPlan() == null) {
+        if (floorEntity.getFloorPlan() == null) {
             return;
         }
 
-        final var RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", floorEntity.getRackCodeIdentifier());
+        var rackCodeSelector = floorEntity.getRackCodeSelector();
+
+        String RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", rackCodeSelector.getAttribute());;
+        if (rackCodeSelector.getValue() != null) {
+            RACK_XPATH_EXPRESSION = String.format("//*[matches(@%1$s, '%2$s')]/@%1$s", rackCodeSelector.getAttribute(), rackCodeSelector.getValue());
+        }
 
         var rackCodeList = new ArrayList<String>();
 
         // process SVG and extract rack IDs
         // if it fails, it fails
         try {
-            var factory = DocumentBuilderFactory.newInstance();
-            var builder = factory.newDocumentBuilder();
-            var doc = builder.parse(new ByteArrayInputStream(floorEntity.getFloorPlan()));
+            var processor = new Processor(false);
+            var doc = processor.newDocumentBuilder()
+                    .build(new StreamSource(new ByteArrayInputStream(floorEntity.getFloorPlan())));
+            var nodeList = processor.newXPathCompiler().evaluate(RACK_XPATH_EXPRESSION, doc);
 
-            var xPathfactory = XPathFactory.newInstance();
-            var xpath = xPathfactory.newXPath();
-            var expr = xpath.compile(RACK_XPATH_EXPRESSION);
-            var nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                rackCodeList.add(nodeList.item(i).getNodeValue());
+            for (int i = 0; i < nodeList.size(); i++) {
+                rackCodeList.add(nodeList.itemAt(i).getStringValue());
             }
         } catch (Exception e) {
             // ignore and log exception

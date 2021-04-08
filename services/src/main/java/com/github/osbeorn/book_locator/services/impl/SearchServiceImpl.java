@@ -3,6 +3,7 @@ package com.github.osbeorn.book_locator.services.impl;
 import com.github.osbeorn.book_locator.lib.v1.Rack;
 import com.github.osbeorn.book_locator.lib.v1.responses.SearchResponse;
 import com.github.osbeorn.book_locator.models.db.*;
+import com.github.osbeorn.book_locator.models.db.lookup.InternalDesignationLookupEntity;
 import com.github.osbeorn.book_locator.models.db.lookup.UdkLookupEntity;
 import com.github.osbeorn.book_locator.services.*;
 import com.github.osbeorn.book_locator.services.exceptions.InvalidSearchParameterException;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 public class SearchServiceImpl implements SearchService {
 
     public static final String L = "L"; // lokacija
-    public static final String I = "I"; // posebna zbirka
+    public static final String I = "I"; // interna oznaka
     public static final String U = "U"; // udk
     public static final String A = "A"; // avtor?
 
@@ -115,6 +116,19 @@ public class SearchServiceImpl implements SearchService {
             // do nothing
         }
 
+        String internalDesignationName = "";
+        String internalDesignationDescription = "";
+        String internalDesignationInfoUrl = "";
+        try {
+            var i = parameters.get(I);
+            var lookupEntity = lookupService.getLookupEntity(InternalDesignationLookupEntity.class, i, true);
+            internalDesignationName = lookupEntity.getName();
+            internalDesignationDescription = lookupEntity.getDescription();
+            internalDesignationInfoUrl = lookupEntity.getInfoUrl();
+        } catch (ResourceNotFoundException e) {
+            // do nothing
+        }
+
         var searchResponse = new SearchResponse();
 
         searchResponse.setL(parameters.get(L));
@@ -138,6 +152,9 @@ public class SearchServiceImpl implements SearchService {
         );
 
         searchResponse.setUdkName(udkName);
+        searchResponse.setInternalDesignationName(internalDesignationName);
+        searchResponse.setInternalDesignationDescription(internalDesignationDescription);
+        searchResponse.setInternalDesignationInfoUrl(internalDesignationInfoUrl);
 
         return searchResponse;
     }

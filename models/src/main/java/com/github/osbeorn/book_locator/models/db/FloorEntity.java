@@ -1,6 +1,7 @@
 package com.github.osbeorn.book_locator.models.db;
 
 import com.github.osbeorn.book_locator.models.db.common.BaseEntity;
+import com.github.osbeorn.book_locator.models.db.embeddable.RackCodeSelector;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,12 +36,9 @@ public class FloorEntity extends BaseEntity implements Serializable {
     @NotNull
     private String name;
 
-    /**
-     * The name of the attribute in a floor plan SVG that defines a rack, eg. data-rack-id
-     */
     @NotNull
-    @Column(name = "rack_code_identifier")
-    private String rackCodeIdentifier;
+    @Embedded
+    private RackCodeSelector rackCodeSelector;
 
     @Lob
     @Column(name = "floor_plan")

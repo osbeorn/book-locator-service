@@ -11,7 +11,8 @@ import org.mapstruct.*;
 @Mapper(
         componentModel = "cdi",
         uses = {
-                UUIDMapper.class
+                UUIDMapper.class,
+                RackCodeSelectorMapper.class
         }
 )
 public abstract class FloorMapper {
