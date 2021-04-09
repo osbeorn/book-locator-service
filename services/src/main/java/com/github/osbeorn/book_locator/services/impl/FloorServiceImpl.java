@@ -260,7 +260,7 @@ public class FloorServiceImpl implements FloorService {
 
         var rackCodeSelector = floorEntity.getRackCodeSelector();
 
-        String RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", rackCodeSelector.getAttribute());;
+        String RACK_XPATH_EXPRESSION = String.format("//*[@%1$s]/@%1$s", rackCodeSelector.getAttribute());
         if (rackCodeSelector.getValue() != null) {
             RACK_XPATH_EXPRESSION = String.format("//*[matches(@%1$s, '%2$s')]/@%1$s", rackCodeSelector.getAttribute(), rackCodeSelector.getValue());
         }
