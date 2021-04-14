@@ -14,6 +14,8 @@ import com.github.osbeorn.book_locator.services.mappers.LibraryMapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,7 +58,9 @@ public class SearchServiceImpl implements SearchService {
     public SearchResponse getSearchResponse(String query) {
         var queryStart = Instant.now();
 
-        var parameters = buildParametersMap(query);
+        String decodedQuery = urlDecodeQuery(query);
+
+        var parameters = buildParametersMap(decodedQuery);
         if (parameters.get(L) == null || parameters.get(U) == null) {
             logSearchError(queryStart, query, "missing.required.search.parameters");
             throw new MissingRequiredSearchParametersException();
@@ -193,6 +197,15 @@ public class SearchServiceImpl implements SearchService {
         }
 
         throw new InvalidSearchParameterException(L);
+    }
+
+    private String urlDecodeQuery(String url) {
+        url = url
+                .replaceAll("\\+", "%2B");
+
+        url = URLDecoder.decode(url, StandardCharsets.UTF_8);
+
+        return url;
     }
 
     private String buildSearchIdentifier(Map<String, String> parameters) {

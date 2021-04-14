@@ -5,6 +5,7 @@ import com.github.osbeorn.book_locator.services.SearchService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -22,7 +23,7 @@ public class SearchResource extends BaseResource {
     private SearchService searchService;
 
     @GET
-    public Response getSearchResults(@QueryParam("q") String q) {
+    public Response getSearchResults(@QueryParam("q") @Encoded String q) {
         var searchResponse = searchService.getSearchResponse(q);
 
         return Response.ok(searchResponse).build();
