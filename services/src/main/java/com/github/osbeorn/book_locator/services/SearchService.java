@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface SearchService {
 
-    SearchResponse getSearchResponse(String query);
+    SearchResponse getSearchResponse(String encodedQuery);
 
     Map<String, String> buildParametersMap(String query);
 

@@ -84,6 +84,7 @@ public class RestApplication extends Application {
         classes.add(FloorResource.class);
         classes.add(LibraryResource.class);
         classes.add(LookupResource.class);
+        classes.add(SearchLogResource.class);
         classes.add(SearchResource.class);
         classes.add(StatisticResource.class);
 

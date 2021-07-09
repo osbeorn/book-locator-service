@@ -1,0 +1,3 @@
+ALTER TABLE search_logs ADD COLUMN library_code VARCHAR NULL;
+ALTER TABLE search_logs ADD COLUMN floor_code VARCHAR NULL;
+ALTER TABLE search_logs ADD COLUMN results VARCHAR NULL;

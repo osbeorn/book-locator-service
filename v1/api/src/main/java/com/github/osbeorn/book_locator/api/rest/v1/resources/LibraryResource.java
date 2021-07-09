@@ -5,7 +5,6 @@ import com.github.osbeorn.book_locator.lib.v1.Floor;
 import com.github.osbeorn.book_locator.lib.v1.Library;
 import com.github.osbeorn.book_locator.lib.v1.error.responses.ApiError;
 import com.github.osbeorn.book_locator.services.LibraryService;
-import com.github.osbeorn.book_locator.services.types.QueryResult;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -97,7 +96,7 @@ public class LibraryResource extends BaseResource {
             )
     )
     public Response getLibraries() {
-        QueryResult<Library> libraryQueryResult = libraryService.getLibraries(getQueryParameters());
+        var libraryQueryResult = libraryService.getLibraries(getQueryParameters());
 
         return ok(libraryQueryResult).build();
     }

@@ -38,6 +38,7 @@ kumuluzee:
     servlet:
       allow-origin: "*"
       supported-methods: "GET,POST,PUT,PATCH,HEAD,OPTIONS"
+      exposed-headers: "X-Total-Count"
 
   jcache:
     caffeine:

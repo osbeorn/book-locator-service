@@ -68,7 +68,7 @@ public abstract class BaseEntity implements Serializable {
      * Sets the revision data prior to persisting to database.
      */
     @PrePersist
-    private void onCreate() {
+    protected void onCreate() {
         Instant instant = Instant.now();
 
         this.setUpdatedAt(instant);
@@ -83,7 +83,7 @@ public abstract class BaseEntity implements Serializable {
      * Sets the updated_at date prior to merging to database.
      */
     @PreUpdate
-    private void onUpdate() {
+    protected void onUpdate() {
         this.setUpdatedAt(Instant.now());
 
         // TODO - benjamink - extract user from token

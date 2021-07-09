@@ -55,14 +55,14 @@ public class SearchServiceImpl implements SearchService {
     private SearchLogService searchLogService;
 
     @Override
-    public SearchResponse getSearchResponse(String query) {
+    public SearchResponse getSearchResponse(String encodedQuery) {
         var queryStart = Instant.now();
 
-        String decodedQuery = urlDecodeQuery(query);
+        String decodedQuery = urlDecodeQuery(encodedQuery);
 
         var parameters = buildParametersMap(decodedQuery);
         if (parameters.get(L) == null || parameters.get(U) == null) {
-            logSearchError(queryStart, query, "missing.required.search.parameters");
+            logSearchError(queryStart, encodedQuery, decodedQuery, null, null, "missing.required.search.parameters");
             throw new MissingRequiredSearchParametersException();
         }
 
@@ -72,7 +72,7 @@ public class SearchServiceImpl implements SearchService {
         try {
             lLibraryCode = extractLibraryCode(l);
         } catch (InvalidSearchParameterException e) {
-            logSearchError(queryStart, query, "invalid.search.parameter");
+            logSearchError(queryStart, encodedQuery, decodedQuery, null, null, "invalid.search.parameter");
             throw e;
         }
 
@@ -80,36 +80,36 @@ public class SearchServiceImpl implements SearchService {
         try {
             lFloorCode = extractFloorCode(l);
         } catch (InvalidSearchParameterException e) {
-            logSearchError(queryStart, query, "invalid.search.parameter");
+            logSearchError(queryStart, encodedQuery, decodedQuery, null, null, "invalid.search.parameter");
             throw e;
         }
 
-        LibraryEntity libraryEntity;
+        LibraryEntity libraryEntity = null;
         try {
             libraryEntity = libraryService.getLibraryEntityByCode(lLibraryCode);
         } catch (ResourceNotFoundException e) {
-            logSearchError(queryStart, query, "library.not.found");
+            logSearchError(queryStart, encodedQuery, decodedQuery, null, null, "library.not.found");
             throw e;
         } catch (Exception e) {
-            logSearchError(queryStart, query, "library.search.error");
+            logSearchError(queryStart, encodedQuery, decodedQuery, libraryEntity, null, "library.search.error");
             throw e;
         }
 
-        FloorEntity floorEntity;
+        FloorEntity floorEntity = null;
         try {
             floorEntity = floorService.getFloorEntityByLibraryIdAndCode(libraryEntity.getId(), lFloorCode);
         } catch (ResourceNotFoundException e) {
-            logSearchError(queryStart, query, "floor.not.found");
+            logSearchError(queryStart, encodedQuery, decodedQuery, libraryEntity, null, "floor.not.found");
             throw e;
         } catch (Exception e) {
-            logSearchError(queryStart, query, "floor.search.error");
+            logSearchError(queryStart, encodedQuery, decodedQuery, libraryEntity, floorEntity, "floor.search.error");
             throw e;
         }
 
         var identifier = buildSearchIdentifier(parameters);
         var rackEntityList = searchFloorRacks(identifier, floorEntity.getRacks());
 
-        logSearch(queryStart, query, rackEntityList);
+        logSearch(queryStart, encodedQuery, decodedQuery, libraryEntity, floorEntity, rackEntityList);
 
         String udkName = "";
         try {
@@ -236,8 +236,18 @@ public class SearchServiceImpl implements SearchService {
                             .replaceAll("\\s+", "");
 
                     if (rce.getRegex()) {
+                        identifier = identifier
+                                // replace "+" with "\+"
+                                .replaceAll("\\+", "\\\\+")
+                                // replace "(" with "\("
+                                .replaceAll("\\(", "\\\\(")
+                                // replace ")" with "\)"
+                                .replaceAll("\\)", "\\\\)")
+                                // replace "." with "\." if "." is not followed by "*" or "+"
+                                .replaceAll("\\.(?![?+*])", "\\\\.");
+
                         var pattern = Pattern.compile(identifier, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-                        return pattern.matcher(searchIdentifier).matches();
+                        return pattern.matcher(cleanSearchIdentifier).matches();
                     } else {
                         return identifier.equalsIgnoreCase(cleanSearchIdentifier);
                     }
@@ -249,24 +259,37 @@ public class SearchServiceImpl implements SearchService {
         return rackContentList;
     }
 
-    private void logSearchError(Instant queryStart, String query, String errorCode) {
+    private void logSearchError(Instant queryStart, String encodedQuery, String decodedQuery, LibraryEntity libraryEntity, FloorEntity floorEntity, String errorCode) {
         var searchLogEntity = new SearchLogEntity();
 
         searchLogEntity.setQueryStart(queryStart);
         searchLogEntity.setQueryEnd(Instant.now());
-        searchLogEntity.setQuery(query);
+        searchLogEntity.setEncodedQuery(encodedQuery);
+        searchLogEntity.setDecodedQuery(decodedQuery);
+        searchLogEntity.setLibraryCode(libraryEntity != null ? libraryEntity.getCode() : null);
+        searchLogEntity.setFloorCode(floorEntity != null ? floorEntity.getCode() : null);
+        searchLogEntity.setError(true);
         searchLogEntity.setErrorCode(errorCode);
 
         searchLogService.create(searchLogEntity);
     }
 
-    private void logSearch(Instant queryStart, String query, List<RackEntity> rackEntityList) {
+    private void logSearch(Instant queryStart, String encodedQuery, String decodedQuery, LibraryEntity libraryEntity, FloorEntity floorEntity, List<RackEntity> rackEntityList) {
         var searchLogEntity = new SearchLogEntity();
 
         searchLogEntity.setQueryStart(queryStart);
         searchLogEntity.setQueryEnd(Instant.now());
-        searchLogEntity.setQuery(query);
+        searchLogEntity.setEncodedQuery(encodedQuery);
+        searchLogEntity.setDecodedQuery(decodedQuery);
+        searchLogEntity.setLibraryCode(libraryEntity != null ? libraryEntity.getCode() : null);
+        searchLogEntity.setFloorCode(floorEntity != null ? floorEntity.getCode() : null);
+        searchLogEntity.setError(false);
         searchLogEntity.setResultCount(rackEntityList.size());
+        searchLogEntity.setResults(
+                rackEntityList.stream()
+                        .map(RackEntity::getCode)
+                        .collect(Collectors.joining(","))
+        );
 
         searchLogService.create(searchLogEntity);
     }

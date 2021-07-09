@@ -20,13 +20,25 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RackContentEntity extends BaseEntity implements Serializable {
 
-    /**
-     * Content identifier:
-     * - regex=false --> 821-311.6=ita
-     * - regex=true --> 821.*
-     */
-    @NotNull
     private String identifier;
+
+    /**
+     * HS, BD, ...
+     */
+    @Column(name = "identifier_part_i")
+    private String identifierPartI;
+
+    /**
+     * 811 GR+LAT, ...
+     */
+    @Column(name = "identifier_part_u")
+    private String identifierPartU;
+
+    /**
+     * CAE
+     */
+    @Column(name = "identifier_part_a")
+    private String identifierPartA;
 
     @NotNull
     @Column(name = "regex")
@@ -36,4 +48,34 @@ public class RackContentEntity extends BaseEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "rack_id")
     private RackEntity rack;
+
+    @PrePersist
+    protected void onCreate() {
+        super.onCreate();
+
+        setIdentifier(generateIdentifier());
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        super.onUpdate();
+
+        setIdentifier(generateIdentifier());
+    }
+
+    private String generateIdentifier() {
+        var identifier = new StringBuilder();
+
+        if (identifierPartI != null) {
+            identifier.append(identifierPartI).append(" ");
+        }
+        if (identifierPartU != null) {
+            identifier.append(identifierPartU).append(" ");
+        }
+        if (identifierPartA != null) {
+            identifier.append(identifierPartA).append(" ");
+        }
+
+        return identifier.toString().trim();
+    }
 }

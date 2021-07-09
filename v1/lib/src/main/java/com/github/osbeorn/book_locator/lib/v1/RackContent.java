@@ -14,5 +14,11 @@ public class RackContent extends BaseType {
 
     private String identifier;
 
+    private String identifierPartI;
+
+    private String identifierPartU;
+
+    private String identifierPartA;
+
     private Boolean regex;
 }

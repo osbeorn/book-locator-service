@@ -36,8 +36,8 @@
 
             <property name="eclipselink.cache.shared.default" value="false"/>
 
-<!--            <property name="eclipselink.logging.level.sql" value="FINE"/>-->
-<!--            <property name="eclipselink.logging.parameters" value="TRUE"/>-->
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="TRUE"/>
         </properties>
     </persistence-unit>
 </persistence>

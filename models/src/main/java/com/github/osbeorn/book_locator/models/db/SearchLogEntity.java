@@ -34,10 +34,24 @@ public class SearchLogEntity extends BaseEntity implements Serializable {
     @Column(name = "query_end")
     private Instant queryEnd;
 
-    private String query;
+    @Column(name = "encoded_query")
+    private String encodedQuery;
+
+    @Column(name = "decoded_query")
+    private String decodedQuery;
+
+    @Column(name = "library_code")
+    private String libraryCode;
+
+    @Column(name = "floor_code")
+    private String floorCode;
 
     @Column(name = "result_count")
     private int resultCount;
+
+    private String results;
+
+    private boolean error;
 
     @Column(name = "error_code")
     private String errorCode;

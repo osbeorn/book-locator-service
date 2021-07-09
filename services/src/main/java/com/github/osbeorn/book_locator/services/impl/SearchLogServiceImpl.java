@@ -1,9 +1,14 @@
 package com.github.osbeorn.book_locator.services.impl;
 
+import com.github.osbeorn.book_locator.lib.v1.SearchLog;
 import com.github.osbeorn.book_locator.models.db.SearchLogEntity;
 import com.github.osbeorn.book_locator.services.SearchLogService;
+import com.github.osbeorn.book_locator.services.mappers.SearchLogMapper;
+import com.github.osbeorn.book_locator.services.types.QueryResult;
 import com.kumuluz.ee.logs.LogManager;
 import com.kumuluz.ee.logs.Logger;
+import com.kumuluz.ee.rest.beans.QueryParameters;
+import com.kumuluz.ee.rest.utils.JPAUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author benjamink, Sunesis ltd.
@@ -26,6 +32,9 @@ public class SearchLogServiceImpl implements SearchLogService {
 
     @PersistenceContext(unitName = "book-locator-service-api")
     private EntityManager entityManager;
+
+    @Inject
+    private SearchLogMapper searchLogMapper;
 
     @Inject
     private UserTransaction userTransaction;
@@ -47,6 +56,18 @@ public class SearchLogServiceImpl implements SearchLogService {
         if (scheduledJob != null) {
             scheduledJob.cancel(true);
         }
+    }
+
+    @Override
+    public QueryResult<SearchLog> getSearchLogs(QueryParameters queryParameters) {
+        var searchLogEntitiesQueried = JPAUtils.getQueried(entityManager, SearchLogEntity.class, queryParameters);
+
+        return new QueryResult<>(
+                searchLogEntitiesQueried.stream()
+                        .map(searchLogMapper::mapToLib)
+                        .collect(Collectors.toList()),
+                searchLogEntitiesQueried.getTotalCount()
+        );
     }
 
     @Override
